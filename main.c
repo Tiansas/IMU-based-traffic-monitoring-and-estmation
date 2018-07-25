@@ -47,7 +47,8 @@ uint8_t AddSDstr[256];
 
 extern uint16_t test_count;
 extern uint16_t N_test;
-extern float Ax_cal[600],Ay_cal[600],Ax_new[600],Ay_m[600],Gz[600],HA_mag[600];
+extern float Ax_cal[600],Ay_cal[600],Ax_new[600],Ay_m[600],HA_mag[600];
+extern short Gz[600];
 extern float delta_t;
 extern int num_tu,num_stop,num_stop_turn; 
 extern int Stop_Turn_po[10][2];
@@ -65,20 +66,9 @@ void Module_setup(void)
 
 	u32 total,free;
 	Modules_Power_Control(ALL_Module,1);
-   USART_INIT(115200,3,ENABLE);
+        USART_INIT(115200,3,ENABLE);
 	//serial port 2 initialize, baud rate 9600 ,enable receive interupt (bluebooth)
 	 USART_INIT(9600,2,ENABLE);
-	
-	 //Change_BT_Name("tian\r\n");
-	 /*uint8_t BTNamestr[256];
-	 USART_Write_LEN("AT",strlen("AT"),2);	
-	 delay_ms(1000);
-	 USART_RECV_DATA_LEN(BTNamestr,2);
-	 printf("%s",BTNamestr);
-	USART_Write_LEN("AT+NAMEtian",strlen("AT+NAMEtian"),2);	
-	 delay_ms(1000);
-	USART_RECV_DATA_LEN(BTNamestr,2);
-	 printf("%s",BTNamestr);*/
 	
 	//Initializes the IMU all modules
 	GPS_Config();
@@ -140,11 +130,6 @@ void loop(void)
 			ADXL345_Read_XYZt();
 			//Get HMC5883L data
 			HMC5883L_Read_XYZt();	
-		  
-      /*
-		  evaluate_rotation_matrix_imu();
-			linear_filter();
-	   	calculate_p_r_y(); */
 
 		  cal_ax=inv_v1_x*conver_x+inv_v2_x*conver_y+inv_v3_x*conver_z;
 		  cal_ay=inv_v1_y*conver_x+inv_v2_y*conver_y+inv_v3_y*conver_z;
@@ -162,7 +147,7 @@ void loop(void)
 			GPS_Parse_Decode();
 			gps_count = 0;
 			#ifdef WRITE_BT
-			printf("ts read GPS=%"PRIu64"£¬la=%f,\r\n",timevalue,info.lat);
+			printf("ts read GPS=%"PRIu64"Â£Â¬la=%f,\r\n",timevalue,info.lat);
 			#endif
 		}
 		timevalue = TIM_GetCounter(TIM3);
